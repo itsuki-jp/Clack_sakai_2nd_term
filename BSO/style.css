@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+}
+
+.circle {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: solid 3px black;
+    margin-right: 20px;
+}
+
+#ball .circle.on {
+    background-color: green;
+}
+
+#strike .circle.on {
+    background-color: yellow;
+}
+
+#out .circle.on {
+    background-color: red;
+}
+
+.off {
+    background-color: grey;
+}
+
+#ball,
+#strike,
+#out {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.label {
+    display: block;
+    text-align: center;
+    width: 80px;
+    height: 80px;
+    padding-top: 30px;
+}
