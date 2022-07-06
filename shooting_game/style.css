@@ -5,7 +5,7 @@
 
 #playArea {
     position: relative;
-    width: auto;
+    width: 700px;
     height: 100vh;
     background-color: antiquewhite;
 }
@@ -13,4 +13,9 @@
 #shooter {
     position: absolute;
     width: 100px;
+}
+
+.beam {
+    position: absolute;
+    width: 50px;
 }
