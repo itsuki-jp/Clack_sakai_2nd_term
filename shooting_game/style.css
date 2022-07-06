@@ -1,0 +1,16 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+#playArea {
+    position: relative;
+    width: auto;
+    height: 100vh;
+    background-color: antiquewhite;
+}
+
+#shooter {
+    position: absolute;
+    width: 100px;
+}
