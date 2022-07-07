@@ -55,9 +55,9 @@ class ShooterClass extends ObjClass {
 }
 
 class BeamClass extends ObjClass {
-    constructor(y, x, dy, dx, theta) {
+    constructor(y, x, dy, dx, theta, src = "images/ball.png") {
         super(y, x, 25, 25);
-        this.src = "images/ball.png";
+        this.src = src;
         this.dy = dy;
         this.dx = dx;
         this.theta = theta;
@@ -71,8 +71,6 @@ class EnemyClass extends ObjClass {
         super(y, x, 100, 80);
         this.src = "images/enemy.png";
         this.beams = [];
-        this.timeCount = 0;
-        this.interval = 10;
     }
     moveBeams() {
         if (this.beams.length === 0) { return; }
@@ -92,11 +90,45 @@ class EnemyClass extends ObjClass {
     }
     addNormalBeam(playArea) {
         for (let angle = -2; angle < 3; angle++) {
-            let beam = new BeamClass(this.y + this.h / 2, this.x + this.w / 2, angle / 5, 1, 0);
+            let beam = new BeamClass(this.y + this.h / 2, this.x + this.w / 2, angle / 5, 1, 0, "images/enemyBullet.png");
             beam.createElm("beam");
             playArea.appendChild(beam.elm);
             this.beams.push(beam);
         }
+    }
+    addCircularBeam(playArea) {
+        let numOfBullet = 10;
+        for (let angle = 0; angle < numOfBullet; angle++) {
+            let beam = new BeamClass(
+                this.y + this.h / 2, this.x + this.w / 2 - 12.5,
+                2 * Math.sin(angle * (2 * Math.PI) / numOfBullet), 2 * Math.cos(angle * (2 * Math.PI) / numOfBullet), 0,
+                "images/enemyBullet.png");
+            beam.createElm("beam");
+            playArea.appendChild(beam.elm);
+            this.beams.push(beam);
+        }
+    }
+    addCircularBeam2(playArea) {
+        let count = 0;
+        let interval = 1;
+        let numOfBullet = 20;
+        let angle = 0;
+        let timeCount = 0;
+        let temp = setInterval(() => {
+            if (count == 10) { clearInterval(temp); }
+            if (timeCount === interval) {
+                let beam = new BeamClass(
+                    this.y + this.h / 2, this.x + this.w / 2 - 12.5,
+                    Math.sin(angle * (2 * Math.PI) / numOfBullet), Math.cos(angle * (2 * Math.PI) / numOfBullet), 0,
+                    "images/enemyBullet.png");
+                beam.createElm("beam");
+                playArea.appendChild(beam.elm);
+                this.beams.push(beam);
+                timeCount = 0;
+                angle++;
+                if (angle % numOfBullet === 0) { count++; }
+            } else { timeCount++; }
+        }, 10);
     }
 }
 
@@ -111,7 +143,9 @@ function init() {
 
 function addEnemy() {
     let enemy = new EnemyClass();
-    enemy.addNormalBeam(playArea);
+    //enemy.addNormalBeam(playArea);
+    //enemy.addCircularBeam(playArea);
+    enemy.addCircularBeam2(playArea);
     enemy.createElm("enemy");
     playArea.appendChild(enemy.elm);
     enemies.push(enemy);
