@@ -171,6 +171,7 @@ function collisionDetectionWithEnemyBullet() {
 
 function collisionDetectionWithShooterBullet() {
     for (let enemy of enemies) {
+        if (enemy.deleted) { continue; }
         if (enemy.collisionDetectionWithArr(shooter.beams, true)) {
             enemy.elm.remove();
             enemy.deleted = true;
