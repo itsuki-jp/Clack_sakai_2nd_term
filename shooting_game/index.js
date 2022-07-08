@@ -1,16 +1,16 @@
 const playArea = document.getElementById("playArea");
-const mainArea = { H: 700, W: 700 };
-const shooterSize = { H: 80, W: 100 };
+const mainSize = { H: 700, W: 700 };
+const shooterSize = { H: 60, W: 75 };
 const enemySize = { H: 100, W: 80 };
-const beamSize = { H: 25, W: 25 };
+const beamSize = { H: 20, W: 20 };
 
 class ObjClass {
-    constructor(y, x, h, w) {
+    constructor(y, x, size) {
         this.src;
         this.y = y;
         this.x = x;
-        this.h = h;
-        this.w = w;
+        this.h = size.H;
+        this.w = size.W;
         this.elm;
     }
     createElm(className) {
@@ -26,7 +26,7 @@ class ObjClass {
         if (this.beams.length === 0) { return; }
         let newBeams = [];
         for (let beam of this.beams) {
-            if (beam.y < -beam.h || mainArea.H < beam.y || beam.x < -beam.w || mainArea.W < beam.x) {
+            if (beam.y < -beam.h || mainSize.H < beam.y || beam.x < -beam.w || mainSize.W < beam.x) {
                 beam.elm.remove();
                 continue;
             }
@@ -66,15 +66,15 @@ class ObjClass {
 }
 
 class ShooterClass extends ObjClass {
-    constructor(y, x) {
-        super(y, x, 80, 100);
+    constructor(y, x, size) {
+        super(y, x, size);
         this.src = "images/shooter.png";
         this.beams = [];
     }
 
     addBeam(playArea) {
         for (let angle = -2; angle < 3; angle++) {
-            let beam = new BeamClass(this.y + 25, this.x, angle / 5, -1, 0)
+            let beam = new BeamClass(this.y + 25, this.x, angle / 5, -1, 0, "images/ball.png", beamSize)
             beam.createElm("beam");
             playArea.appendChild(beam.elm);
             this.beams.push(beam);
@@ -83,8 +83,8 @@ class ShooterClass extends ObjClass {
 }
 
 class BeamClass extends ObjClass {
-    constructor(y, x, dy, dx, theta, src = "images/ball.png") {
-        super(y, x, 25, 25);
+    constructor(y, x, dy, dx, theta, src, size) {
+        super(y, x, size);
         this.src = src;
         this.dy = dy;
         this.dx = dx;
@@ -93,10 +93,10 @@ class BeamClass extends ObjClass {
 }
 
 class EnemyClass extends ObjClass {
-    constructor() {
-        let y = Math.random() * (mainArea.H - 80);
-        let x = Math.random() * (mainArea.W / 4);
-        super(y, x, 100, 80);
+    constructor(size) {
+        let y = Math.random() * (mainSize.H - 100);
+        let x = Math.random() * (mainSize.W / 4);
+        super(y, x, size);
         this.src = "images/enemy.png";
         this.beams = [];
         this.deleted = false;
@@ -109,7 +109,7 @@ class EnemyClass extends ObjClass {
     }
     addNormalBeam(playArea) {
         for (let angle = -2; angle < 3; angle++) {
-            let beam = new BeamClass(this.y + this.h / 2, this.x + this.w / 2, angle / 5, 1, 0, "images/enemyBullet.png");
+            let beam = new BeamClass(this.y + this.h / 2, this.x + this.w / 2, angle / 5, 1, 0, "images/enemyBullet.png", beamSize);
             this.addBeam(beam, playArea);
         }
     }
@@ -117,9 +117,9 @@ class EnemyClass extends ObjClass {
         let numOfBullet = 10;
         for (let angle = 0; angle < numOfBullet; angle++) {
             let beam = new BeamClass(
-                this.y + this.h / 2, this.x + this.w / 2 - 12.5,
+                this.y + this.h / 2, this.x + this.w / 2 - 25 / 2,
                 2 * Math.sin(angle * (2 * Math.PI) / numOfBullet), 2 * Math.cos(angle * (2 * Math.PI) / numOfBullet), 0,
-                "images/enemyBullet.png");
+                "images/enemyBullet.png", beamSize);
             this.addBeam(beam, playArea);
         }
     }
@@ -134,9 +134,9 @@ class EnemyClass extends ObjClass {
             if (count == 20) { clearInterval(temp); }
             if (timeCount === interval) {
                 let beam = new BeamClass(
-                    this.y + this.h / 2, this.x + this.w / 2 - 12.5,
+                    this.y + this.h / 2, this.x + this.w / 2 - 25 / 2,
                     Math.sin(angle * (2 * Math.PI) / numOfBullet), Math.cos(angle * (2 * Math.PI) / numOfBullet), 0,
-                    "images/enemyBullet.png");
+                    "images/enemyBullet.png", beamSize);
                 this.addBeam(beam, playArea);
                 timeCount = 0;
                 angle++;
@@ -150,13 +150,13 @@ let shooter;
 let enemies = [];
 
 function init() {
-    shooter = new ShooterClass(700 - 80, 700 - 100, );
+    shooter = new ShooterClass(mainSize.H - shooterSize.H, mainSize.W - shooterSize.W, shooterSize);
     shooter.createElm("shooter");
     playArea.appendChild(shooter.elm);
 }
 
 function addEnemy() {
-    let enemy = new EnemyClass();
+    let enemy = new EnemyClass(enemySize);
     enemy.addCircularBeam2(playArea);
     enemy.createElm("enemy");
     playArea.appendChild(enemy.elm);

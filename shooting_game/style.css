@@ -12,14 +12,14 @@
 
 .shooter {
     position: absolute;
-    width: 100px;
-    height: 80px;
+    width: 75px;
+    height: 60px;
 }
 
 .beam {
     position: absolute;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
 }
 
 .enemy {
