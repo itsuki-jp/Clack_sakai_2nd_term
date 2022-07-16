@@ -1,8 +1,12 @@
-const playArea = document.getElementById("playArea");
-const mainSize = { H: playArea.offsetHeight, W: playArea.offsetWidth };
+const playArea = document.getElementById("canvas");
+const ctx = playArea.getContext("2d");
+const mainSize = { H: 500, W: 800 };
 const shooterSize = { H: 60, W: 75 };
 const enemySize = { H: 100, W: 80 };
 const beamSize = { H: 20, W: 20 };
+
+canvas.width = mainSize.W;
+canvas.height = mainSize.H;
 
 class ObjClass {
   constructor(y, x, size) {
@@ -13,38 +17,11 @@ class ObjClass {
     this.w = size.W;
     this.elm;
   }
-  createElm(className) {
-    const elm = document.createElement("img");
-    elm.src = this.src;
-    elm.setAttribute("class", className);
-    elm.style.left = this.x + "px";
-    elm.style.top = this.y + "px";
 
-    this.elm = elm;
+  createElm(img) {
+    this.img = img;
   }
-  moveBeams() {
-    if (this.beams.length === 0) {
-      return;
-    }
-    let newBeams = [];
-    for (let beam of this.beams) {
-      if (
-        beam.y < -beam.h ||
-        mainSize.H < beam.y + beam.h ||
-        beam.x < -beam.w ||
-        mainSize.W < beam.x + beam.w
-      ) {
-        beam.elm.remove();
-        continue;
-      }
-      beam.y += beam.dy;
-      beam.x += beam.dx;
-      beam.elm.style.top = beam.y + "px";
-      beam.elm.style.left = beam.x + "px";
-      newBeams.push(beam);
-    }
-    this.beams = newBeams;
-  }
+
   collisionDetection(obj2) {
     let obj1 = this;
     let obj1Centre = { x: obj1.x + obj1.w / 2, y: obj1.y + obj1.h / 2 };
@@ -77,53 +54,39 @@ class ObjClass {
 class ShooterClass extends ObjClass {
   constructor(y, x, size) {
     super(y, x, size);
-    this.src = "./images/shooter.png";
     this.beams = [];
   }
-  moveShooter(dy, dx) {}
 
-  addBeam(playArea) {
-    for (let angle = -2; angle < 3; angle++) {
-      let beam = new BeamClass(
-        this.y + 25,
-        this.x,
-        angle / 5,
-        -1,
-        0,
-        "images/ball.png",
-        beamSize
-      );
-      beam.createElm("beam");
-      playArea.appendChild(beam.elm);
-      this.beams.push(beam);
+  moveBeams() {
+    if (this.beams.length === 0) {
+      return;
     }
+    let newBeams = [];
+    for (let beam of this.beams) {
+      if (
+        beam.y < -beam.h ||
+        mainSize.H < beam.y + beam.h ||
+        beam.x < -beam.w ||
+        mainSize.W < beam.x + beam.w
+      ) {
+        beam.elm.remove();
+        continue;
+      }
+      beam.y += beam.dy;
+      beam.x += beam.dx;
+      beam.elm.style.top = beam.y + "px";
+      beam.elm.style.left = beam.x + "px";
+      newBeams.push(beam);
+    }
+    this.beams = newBeams;
   }
-}
 
-class BeamClass extends ObjClass {
-  constructor(y, x, dy, dx, theta, src, size) {
-    super(y, x, size);
-    this.src = src;
-    this.dy = dy;
-    this.dx = dx;
-    this.theta = theta;
-  }
-}
-
-class EnemyClass extends ObjClass {
-  constructor(size) {
-    let y = Math.random() * (mainSize.H - 100);
-    let x = Math.random() * (mainSize.W / 4);
-    super(y, x, size);
-    this.src = "images/enemy.png";
-    this.beams = [];
-    this.deleted = false;
-  }
   addBeam(beam, playArea) {
     beam.createElm("beam");
     playArea.appendChild(beam.elm);
     this.beams.push(beam);
   }
+
   addNormalBeam(playArea) {
     for (let angle = -2; angle < 3; angle++) {
       let beam = new BeamClass(
@@ -186,6 +149,28 @@ class EnemyClass extends ObjClass {
         timeCount++;
       }
     }, 10);
+  }
+}
+
+class BeamClass extends ObjClass {
+  constructor(y, x, dy, dx, theta, src, size) {
+    super(y, x, size);
+    this.src = src;
+    this.dy = dy;
+    this.dx = dx;
+    this.theta = theta;
+  }
+}
+
+class PlayerClass extends ShooterClass {}
+class EnemyClass extends ObjClass {
+  constructor(size) {
+    let y = Math.random() * (mainSize.H - 100);
+    let x = Math.random() * (mainSize.W / 4);
+    super(y, x, size);
+    this.src = "images/enemy.png";
+    this.beams = [];
+    this.deleted = false;
   }
 }
 
