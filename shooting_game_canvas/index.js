@@ -249,7 +249,7 @@ setInterval(() => {
   let rmv = [];
   for (let i = 0; i < enemies.length; i++) {
     let elm = enemies[i];
-    if (elm.deleted && elm.beams.length === 0) {
+    if (elm.deleted &&rec elm.beams.length === 0) {
       rmv.push(i);
       continue;
     }
